@@ -12,6 +12,9 @@ use app\models\ContactForm;
 use yii\data\Pagination;
 
 use app\models\News;
+use app\models\Users;
+use app\models\PostForm;
+use yii\web\UploadedFile;
 
 class SiteController extends Controller
 {
@@ -93,6 +96,35 @@ class SiteController extends Controller
         ->one();
       $image_url = '../static/images/';
       return $this->render('post', compact('post', 'image_url'));
+    }
+
+    public function actionPostChange($id = null)
+    {
+        $user = Users::findOne(['login' => Yii::$app->request->cookies->getValue('member_id')] );
+        $post = PostForm::findOne(['post_id' => $id] );
+        $old_img = $post->image;
+        $image_url = '../static/images/';
+
+        if ($post->load(Yii::$app->request->post() )) {
+            if ($_FILES['PostForm']['name']['image'] == '') {
+              $post->image = $old_img;
+            } else {
+              $post->image = UploadedFile::getInstance($post, 'image');
+            }
+            $post->date = date("Y-m-d H-i-s");
+            if ($post->save() ) {
+
+                move_uploaded_file($_FILES['PostForm']['name']['image'], '@mediaurl');
+                $post->image = Yii::getAlias('@mediaurl/' . $post->image->baseName . '.' . $post->image->extension);
+
+                Yii::$app->session->setFlash('success', 'Данные успешно изменены');
+                return $this->redirect(['site/index']);
+            }
+
+
+        }
+
+        return $this->render('post-change', compact('user', 'post', 'image_url'));
     }
 
     /**

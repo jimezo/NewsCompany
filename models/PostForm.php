@@ -17,7 +17,7 @@
 
         [['title', 'text', ], 'trim'],
 
-        ['image', 'file', 'skipOnEmpty' => false],
+        ['image', 'file', 'skipOnEmpty' => true],
         ['image', 'file', 'extensions' => ['jpg', 'png', 'jpeg']],
 
         ['title', 'required', 'message' => 'Необходимо заполнить поле «Заголовок»'],

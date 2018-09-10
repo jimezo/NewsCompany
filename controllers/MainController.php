@@ -74,7 +74,7 @@ class MainController extends CommonController
                 Yii::$app->session->setFlash('success', 'Вы авторизованны');
                 return $this->redirect(array('site/index'));
             } else {
-              Yii::$app->session->setFlash('error', 'Неверно введен пароль');
+              Yii::$app->session->setFlash('error', 'Неверно введен Логин/Пароль');
             }
 
         } else {
@@ -141,6 +141,8 @@ class MainController extends CommonController
     $error;
 
     $user = Users::findOne(['login' => $login]);
+    $old_img = $user->image;
+    $image_url = '../static/images/';
 
     if (!$user) {
       Yii::$app->session->setFlash('error', 'Такого пользователя не существует');
@@ -151,11 +153,11 @@ class MainController extends CommonController
 
     if ($user->load(Yii::$app->request->post() ))
     {
-        if ($_FILES['Users']['name']['image'] ? $user->image = UploadedFile::getInstance($user, 'image') : "");
+        if ($_FILES['Users']['name']['image'] ? $user->image = UploadedFile::getInstance($user, 'image') : $user->image = $old_img);
         if ($user->save(false) ){
 
-          move_uploaded_file($_FILES['Users']['name']['image'], '@userimg');
-          $user->image->saveAs(Yii::getAlias('@userimg' . $user->image->baseName . '.' . $user->image->extension));
+          move_uploaded_file($_FILES['Users']['name']['image'], '@mediaurl');
+          $user->image = Yii::getAlias('@mediaurl/' . $user->image->baseName . '.' . $user->image->extension);
           Yii::$app->session->setFlash('success', 'Данные успешно изменены');
           return $this->refresh();
         } else {
@@ -165,7 +167,7 @@ class MainController extends CommonController
 
     }
 
-    return $this->render('personal-area', compact('login', 'user', 'error', 'user_posts'));
+    return $this->render('personal-area', compact('login', 'user', 'error', 'user_posts', 'image_url'));
   }
 
 

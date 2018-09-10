@@ -5,7 +5,12 @@
 
  ?>
 
-  <div class="detail-view">
+<?php
+if (Yii::$app->request->cookies->getValue('member_id') == $post->author )
+    echo Html::a('Изменить', Url::to(['/site/post-change/', 'id' => $post->post_id]));
+?>
+
+ <div class="detail-view">
 
     <img src=" <?= $image_url . $post['image'] ?> " width=600px alt="">
     <h1>Заголовок: <?= $post['title'] ?></h1>

@@ -4,7 +4,7 @@
 
   use yii\widgets\ActiveForm;
   use yii\helpers\Html;
-
+  $this->title = 'Регистрация';
 ?>
 
 <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
